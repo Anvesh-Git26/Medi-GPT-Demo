@@ -1,34 +1,31 @@
-# Medi-GPT Lite 🏥
+# Medi-GPT: Domain-Adaptive Transformer Implementation
 
-**A PyTorch implementation of a Decoder-only Transformer, built from scratch to study the internal mechanics of Large Language Models within a healthcare context.**
+## 🧬 Project Overview
+**Medi-GPT** is a first-principles implementation of a Decoder-only Transformer, built entirely in **PyTorch** from scratch (no HuggingFace / High-level APIs). 
 
-## 📌 Project Overview
-Unlike standard API wrappers, this project constructs the mathematical architecture of a GPT-style model manually. It is based on the "nanoGPT" curriculum and *Attention Is All You Need* (Vaswani et al.), adapted to train on a synthetic medical terminology dataset.
+The goal of this project was to deconstruct and re-engineer the mathematical foundations of Large Language Models (LLMs) to study how **Multi-Head Self-Attention (MHSA)** converges on specialized medical syntax.
 
-The core objective is to demonstrate a "White Box" understanding of:
-- **Multi-Head Self-Attention (MHSA):** Implementation of parallel attention heads to capture semantic relationships.
-- **Positional Embeddings:** Manual implementation of learnable position vectors.
-- **Layer Normalization (Pre-LN):** Applied for training stability in deeper networks.
-- **Residual Connections:** Implemented to mitigate vanishing gradients during backpropagation.
+## 🔬 Core Architecture (White-Box Implementation)
+Unlike API-wrapper projects, every component here is manually implemented to demonstrate deep architectural understanding:
 
-## ⚙️ Technical Architecture
-* **Framework:** PyTorch
-* **Architecture:** GPT-2 style Decoder-only Transformer
-* **Optimization:** AdamW Optimizer
+* **Causal Self-Attention:** Implemented the scaled dot-product attention mechanism with masking to ensure autoregressive generation:  
+  $Attention(Q, K, V) = Softmax(\frac{QK^T}{\sqrt{d_k}})V$
+* **Residual Streams:** Manual implementation of skip connections (`x + layer(x)`) to preserve gradient flow and mitigate the vanishing gradient problem during backpropagation.
+* **Layer Normalization:** Applied Pre-LN architecture (Normalizing before the sub-layer input) for superior training stability.
+* **Positional Embeddings:** Learnable vector embeddings to encode sequence order, replacing static sinusoidal encodings.
+
+## 🛠️ Tech Stack
+* **Framework:** PyTorch (Low-level `torch.nn` and `torch.functional`)
+* **Optimization:** AdamW with Weight Decay
 * **Loss Function:** Cross-Entropy Loss
-* **Tokenization:** Character-level encoding (for architectural transparency)
+* **Data Pipeline:** Character-level Tokenization on synthetic clinical corpora.
 
-## 🚀 Key Features
-1. **Custom Training Loop:** Implements a full training cycle with batching, forward pass, loss calculation, and backpropagation.
-2. **Medical Domain Adaptation:** The model is trained on a specific corpus of chronic condition definitions (Diabetes, Hypertension, Asthma) to observe how embeddings cluster domain-specific terms.
-3. **Hyperparameter Config:** structured configuration for flexible experimentation with block size, embedding dimensions, and head counts.
+## 📊 Research Goals
+1.  **Gradient Flow Analysis:** Observing how residual connections affect loss convergence in deeper networks.
+2.  **Domain Adaptation:** Testing how a small-scale transformer learns to cluster medical terminology (e.g., associating "Insulin" with "Diabetes") purely from distributional semantics.
 
-## ⚠️ Limitations
-* **Educational Scope:** This model is optimized for CPU training to demonstrate architectural correctness. It is not intended for clinical use.
-* **Dataset:** Trained on a small synthetic dataset for proof-of-concept.
-
-## 💻 Usage
-To initialize the model, train on the dataset, and generate text:
+## 🚀 Usage
+To initialize the architecture and begin the pre-training loop:
 
 ```bash
 python main.py
